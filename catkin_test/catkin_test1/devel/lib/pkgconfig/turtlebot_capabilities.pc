@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: turtlebot_capabilities
+Description: Description of turtlebot_capabilities
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib 
+Requires: 

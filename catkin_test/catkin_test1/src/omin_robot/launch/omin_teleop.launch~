@@ -1,0 +1,53 @@
+<launch>
+  <arg name="base"       default="$(optenv TURTLEBOT_BASE kobuki)"/>  <!-- create, roomba -->
+  <arg name="battery"    default="$(optenv TURTLEBOT_BATTERY /sys/class/power_supply/BAT0)"/>  <!-- /proc/acpi/battery/BAT0 in 2.6 or earlier kernels-->
+  <arg name="stacks"     default="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
+  <arg name="3d_sensor"  default="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
+  <arg name="simulation" default="$(optenv TURTLEBOT_SIMULATION false)"/>
+  <arg name="serialport" default="$(optenv TURTLEBOT_SERIAL_PORT /dev/3womin)"/> <!-- /dev/ttyUSB0, /dev/ttyS0 -->
+
+  <param name="/use_sim_time" value="$(arg simulation)"/>
+  <include file="$(find turtlebot_bringup)/launch/includes/robot.launch.xml">
+    <arg name="base" value="$(arg base)" />
+    <arg name="stacks" value="$(arg stacks)" />
+    <arg name="3d_sensor" value="$(arg 3d_sensor)" />
+  </include>
+  <include file="$(find turtlebot_bringup)/launch/includes/mobile_base.launch.xml">
+    <arg name="base" value="$(arg base)" />
+    <arg name="serialport" value="$(arg serialport)" />
+  </include>
+<!--
+  <include file="$(find turtlebot_bringup)/launch/includes/netbook.launch.xml">
+    <arg name="battery" value="$(arg battery)" />
+  </include>
+-->
+<!--
+  <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node">
+    <param name="frame_id" value="laser_link" />
+    <param name="min_ang" value="-1.8" />
+    <param name="max_ang" value="1.8" />
+  </node>
+-->
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+    <param name="serial_port"         type="string" value="/dev/rplidar"/>  
+    <param name="serial_baudrate"     type="int"    value="115200"/>
+    <param name="frame_id"            type="string" value="laser_link"/>
+    <param name="inverted"            type="bool"   value="false"/>
+    <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
+  <node name="laser_filter"  pkg="laser_data"  type="laser_filter" output="screen"/>
+
+<!-- joystick -->
+  <include file="$(find turtlebot_teleop)/launch/includes/velocity_smoother.launch.xml"/> 
+  <node pkg="turtlebot_teleop" type="turtlebot_teleop_joy" name="turtlebot_teleop_joystick">
+    <param name="scale_angular" value="0.7"/>
+    <param name="scale_linear_x" value="0.3"/>
+    <param name="scale_linear_y" value="0.3"/>
+    <param name="axis_deadman" value="5"/>
+    <param name="axis_linear_x" value="1"/>
+    <param name="axis_linear_y" value="-1"/>
+    <param name="axis_angular" value="0"/>
+    <remap from="turtlebot_teleop_joystick/cmd_vel" to="teleop_velocity_smoother/raw_cmd_vel"/>
+  </node>
+  <node pkg="joy" type="joy_node" name="joystick"/>
+</launch>

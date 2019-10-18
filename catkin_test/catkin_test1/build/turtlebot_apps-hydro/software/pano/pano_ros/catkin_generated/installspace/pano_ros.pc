@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: pano_ros
+Description: Description of pano_ros
+Version: 2.2.5
+Cflags: -I/home/tmb/catkin_test/catkin_test1/install/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib 
+Requires: std_msgs sensor_msgs actionlib_msgs message_runtime

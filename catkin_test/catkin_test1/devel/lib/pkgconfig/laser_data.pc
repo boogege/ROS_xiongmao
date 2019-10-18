@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: laser_data
+Description: Description of laser_data
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib 
+Requires: 

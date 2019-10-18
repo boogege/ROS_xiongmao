@@ -1,0 +1,292 @@
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <math.h>
+#include <iostream>
+#include <stdio.h>
+#include <pthread.h>
+#include <string.h>
+#include <fstream>
+#include <sys/stat.h>   /**/
+#include <fcntl.h>      /*文件控制定义*/
+#include <termios.h>    /*PPSIX终端控制定义*/
+#include <errno.h>      /*错误号定义*/
+using namespace std;
+#define FALSE  -1
+#include "ros/ros.h"
+#include "std_msgs/String.h"  
+#include <sstream>
+#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <geometry_msgs/PoseWithCovariance.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/Quaternion.h>
+#include  <std_srvs/Empty.h>
+#include "sensor_msgs/LaserScan.h"
+#include "actionlib_msgs/GoalID.h"
+#include "actionlib_msgs/GoalStatusArray.h"
+#include "actionlib_msgs/GoalStatus.h"
+#include <nav_msgs/Odometry.h>
+#include<time.h>
+#include "serial/serial.h"
+#define LEFT_GO 1
+#define LEFT_BACK 2
+#define RIGHT_GO 3
+#define RIGHT_BACK 4
+
+#define UP 1
+#define DOWN 2
+#define CATCH_1 3
+#define PUT_1 4
+#define CATCH_2 5
+#define PUT_2 6
+bool crash_1=false,crash_2=false,crash_3=false,crash_4=false, crash=false; //碰撞变量  
+bool reach=false;	//是否到达目标店
+bool first=true;
+bool back = false;
+int mcu_cmd=0;
+int vel_select=0;  //选择LEFT_GO LEFT_BACK RIGHT_GO RIGHT_BACK速度中的一个
+int current_point=0;  //当前导航点
+int goal_n=0;	
+int current_status=0;  
+int last_current_status=0;
+std::string rec_buffer;
+
+//发布订阅节点
+ros::Publisher pub_goal;  //发布目标点
+ros::Publisher pub_send_mcu;  //向下位机发送指令
+ros::Publisher pub_vel;	//向cmd_vel话题发送数据
+ros::Subscriber sub_status;  //订阅当前导航状态
+ros::Subscriber sub_pose;  //订阅amcl位姿
+ros::Subscriber sub_mcu_msg;  //读取下位机消息
+
+double duration;  //前进后退时间
+double nav_point[10][4]={0.328,1.79,-0.244,0.970,0.833,-1.755,-0.039,0.999,4.33029,0.28895,0.95276,0.30371,3.572,0.230,-0.705,0.709,4.323,-0.316,-0.984,0.177};
+//double goal_point[10][2]={0.38,2.37};
+void set_goal(int i)
+{
+	ros::Rate loop_rate(5);
+	geometry_msgs::PoseStamped msg;
+	msg.header.frame_id = "map";
+	msg.header.stamp = ros::Time::now();
+	msg.pose.position.x=nav_point[i][0];
+	msg.pose.position.y=nav_point[i][1];
+	msg.pose.orientation.z=nav_point[i][2];
+	msg.pose.orientation.w=nav_point[i][3];
+	pub_goal.publish(msg);
+	cout<<"aaaaaaaa"<<endl;	
+	loop_rate.sleep();
+	goal_n++;
+}
+
+
+void pub_switch()
+{
+	if(current_point>=0&&current_point<=6)	
+	{
+		set_goal(current_point);
+	}
+	else
+	{
+		fprintf(stderr,"Unsupported stop bits\n");
+	}
+	
+}
+
+void *pub_na(void *arg)
+{
+	string port("/dev/ttyUSB1");
+        unsigned long baud = 115200;
+        serial::Serial my_serial(port, baud, serial::Timeout::simpleTimeout(1000));
+	while(ros::ok())
+	{
+	rec_buffer =my_serial.readline(1000,"\n");
+	char c = rec_buffer[0];
+	switch(c)
+	{
+		case '0': crash_1=false;crash_2=false;crash_3=false;crash_4=false;crash=false;break;
+		case '1': crash_1=true;crash=true; break;
+		case '2': crash_2=true;crash=true; break;
+		case '3': crash_3=true;crash=true; break;
+		case '4': crash_4=true;crash=true; break;
+		case '5': crash_1=true;crash_2=true; crash=true;break;
+		case '6': crash_3=true;crash_4=true;crash=true; break;
+	}
+	printf("%c\n",c);
+	usleep(10000);
+	if(first)
+	pub_switch();
+	first=false;
+	}
+}
+
+
+void create_all_thread(void)
+{
+
+	pthread_t pub_thread ;
+		
+	if( (pthread_create( &pub_thread , NULL , pub_na , NULL )) != 0 )
+	{
+		perror("Create the mode_change_thread fail");
+		exit( 1 );
+	}
+}
+
+void send_vel()
+{
+    time_t begin,end,dura; 
+    begin=time(NULL);
+    //sleep(1);
+    geometry_msgs::Twist msg;
+    ros::Rate loop_rate(10);
+    while(ros::ok())
+    {   
+	end=time(NULL);   
+	dura = end-begin;
+	printf("dura%ld\n",dura);
+    	if((current_point==0||current_point==1)&&dura>5)
+	{
+		if(back==true)
+		{
+			current_point++;
+			
+			pub_switch();
+		}
+		return;
+	}
+	else if(current_point==2)
+	{
+		if(back==false&&(crash_3==true||crash_4==true))
+		{
+			return;
+		}
+		else if(back==true&&dura>3)
+		{
+			current_point++;
+			
+			pub_switch();	
+		}
+	}
+	else if(current_point==3)
+	{
+		if(back==false&&(crash_3==true||crash_4==true))
+		{
+			return;
+		}
+		else if(back==true&&dura>3)
+		{
+			current_point++;
+			
+			pub_switch();	
+		}
+	}
+
+	switch(vel_select)
+	{
+		case LEFT_GO:msg.linear.x = -0.1;msg.linear.y = 0.1732;break;
+		case LEFT_BACK:msg.linear.x = 0.1;msg.linear.y = -0.1732;break;
+		case RIGHT_GO:msg.linear.x = -0.1;msg.linear.y = -0.1732;break;
+		case RIGHT_BACK:msg.linear.x = 0.1;msg.linear.y = 0.1732;break;
+	}
+	pub_vel.publish(msg);	  
+	printf("vel:%d\n",vel_select);
+	if(reach==true)
+	{
+		return;
+	}	
+      	loop_rate.sleep();
+	       
+    }
+}
+
+
+void sendMcu()
+{
+	string port("/dev/ttyUSB1");
+        unsigned long baud = 115200;
+	serial::Serial my_serial(port, baud, serial::Timeout::simpleTimeout(1000));
+	std::string msg;
+	switch(mcu_cmd)
+	{
+		case CATCH_1: msg="c";break;
+		case CATCH_2: msg="e";;break;
+		case PUT_1: msg="d";break;
+		case PUT_2: msg="f";;break;
+		case UP: msg="a";;break;
+		case DOWN: msg="b";;break;
+	}
+	//pub_send_mcu.publish(msg);
+	my_serial.write(msg);
+	return;
+}
+void statusCallback(const actionlib_msgs::GoalStatusArray::ConstPtr& msg)
+{
+	if (goal_n>0)
+	{	
+		last_current_status=current_status;
+		current_status=msg->status_list[0].status;
+		//cout<<"aaaaaaaa1111qq"<<endl;
+		if ((current_status==3)&&(last_current_status!=current_status))
+		{
+			//sleep(1);
+			printf("navigation reach \n");
+			
+			switch(current_point)
+			{
+				case 0: vel_select=LEFT_GO;send_vel();mcu_cmd=CATCH_1;sendMcu();vel_select=LEFT_BACK;back=true;send_vel();back=false;break;
+				case 1: vel_select=RIGHT_GO;send_vel();mcu_cmd=CATCH_2;sendMcu();mcu_cmd=UP;sendMcu();vel_select=RIGHT_BACK;back=true;send_vel();back=false;break;
+				case 2: vel_select=RIGHT_GO;send_vel();sleep(1);mcu_cmd=PUT_2;sendMcu();sleep(1);mcu_cmd=CATCH_2;sendMcu();vel_select=RIGHT_BACK;back=true;send_vel();back=false;break;
+				case 3: vel_select=RIGHT_GO;send_vel();mcu_cmd=PUT_2;sendMcu();mcu_cmd=CATCH_2;sendMcu();vel_select=RIGHT_BACK;back=true;send_vel();back=false;break;
+				case 4: vel_select=LEFT_GO;send_vel();mcu_cmd=PUT_1;sendMcu();vel_select=LEFT_BACK;back=true;send_vel();back=false;break;
+			}
+
+			//current_point++;	//到达目标点且执行完抓取动作以后才导航到下一个点
+		}		
+	}
+}
+
+/*单片机上传数据回调函数
+void mcuCallback(const std_msgs::String::ConstPtr& msg) 
+{
+	//printf("%s",msg->data);
+	//string str = msg->data;
+	//cout<<str<<std::endl;
+	char c = msg->data[0];
+	int n = c;
+	switch(n)
+	{
+		case 0: crash_1=false;crash_2=false;crash_3=false;crash_4=false;break;
+		case 1: crash_1=true; break;
+		case 2: crash_2=true; break;
+		case 3: crash_3=true; break;
+		case 4: crash_4=true; break;
+		case 12: crash_1=true;crash_2=true; break;
+		case 34: crash_3=true;crash_4=true; break;
+	}
+}*/
+
+int main(int argc,char** argv)
+{
+	ros::init(argc, argv, "navigation_goal");
+        ros::NodeHandle n;	
+
+	pub_send_mcu = n.advertise<std_msgs::String>("write_serial",1000);	//向单片机发送指令
+	pub_goal = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",10);	//发布导航点
+	pub_vel = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1000);	//向底盘发送速度
+	
+	sub_status = n.subscribe("move_base/status",100,statusCallback);	//订阅是否到达目标点
+	//sub_mcu_msg = n.subscribe("read_serial",100,mcuCallback);	//单片机数据
+
+	create_all_thread();
+	ros::spin();	
+        return 0;
+}
+
+

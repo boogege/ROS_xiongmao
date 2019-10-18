@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: hokuyo_node
+Description: Description of hokuyo_node
+Version: 1.7.8
+Cflags: -I/home/tmb/catkin_test/catkin_test1/install/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib -llibhokuyo
+Requires: rosconsole

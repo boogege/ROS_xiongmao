@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: rdwr_serial
+Description: Description of rdwr_serial
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib 
+Requires: message_generation nav_msgs roscpp rospy serial std_msgs

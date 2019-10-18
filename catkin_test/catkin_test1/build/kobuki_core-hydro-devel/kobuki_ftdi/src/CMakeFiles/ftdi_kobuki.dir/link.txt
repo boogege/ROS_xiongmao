@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/ftdi_kobuki.dir/ftdi_kobuki.cpp.o  -o /home/tmb/catkin_test/catkin_test1/devel/lib/kobuki_ftdi/ftdi_kobuki -rdynamic -lftdi 

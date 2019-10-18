@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: yocs_cmd_vel_mux
+Description: Description of yocs_cmd_vel_mux
+Version: 0.5.3
+Cflags: -I/home/tmb/catkin_test/catkin_test1/devel/include -I/home/tmb/catkin_test/catkin_test1/src/yujin_ocs-hydro-devel/yocs_cmd_vel_mux/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib -lyocs_cmd_vel_mux_nodelet -lyaml-cpp
+Requires: roscpp pluginlib nodelet dynamic_reconfigure geometry_msgs

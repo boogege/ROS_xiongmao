@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: turtlebot_panorama
+Description: Description of turtlebot_panorama
+Version: 2.2.5
+Cflags: -I/home/tmb/catkin_test/catkin_test1/src/turtlebot_apps-hydro/turtlebot_panorama/include -I/usr/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib /usr/lib/x86_64-linux-gnu/libboost_system.so
+Requires: roscpp actionlib std_msgs std_srvs nav_msgs sensor_msgs geometry_msgs turtlebot_msgs image_transport pano_ros

@@ -1,0 +1,3 @@
+#!/bin/sh
+source /home/ubuntu/catkin_ws/devel/setup.bash
+roslaunch omin_robot omin_gmapping.launch

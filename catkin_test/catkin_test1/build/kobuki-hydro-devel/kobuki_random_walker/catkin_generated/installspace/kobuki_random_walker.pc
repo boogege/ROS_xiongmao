@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: kobuki_random_walker
+Description: Description of kobuki_random_walker
+Version: 0.6.2
+Cflags: -I/home/tmb/catkin_test/catkin_test1/install/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib -lkobuki_random_walker_nodelet
+Requires: ecl_threads geometry_msgs kobuki_msgs nodelet pluginlib roscpp std_msgs yocs_controllers

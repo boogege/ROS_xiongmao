@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: kobuki_controller_tutorial
+Description: Description of kobuki_controller_tutorial
+Version: 0.6.2
+Cflags: -I/home/tmb/catkin_test/catkin_test1/src/kobuki-hydro-devel/kobuki_controller_tutorial/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib -lbump_blink_controller_nodelet
+Requires: roscpp nodelet pluginlib std_msgs kobuki_msgs yocs_controllers

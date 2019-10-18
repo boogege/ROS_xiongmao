@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/include/kobuki_ftdi/scanner.hpp
+vector
+-
+map
+-
+usb.h
+-
+stdint.h
+-
+
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/src/get_serial_number.cpp
+iostream
+-
+kobuki_ftdi/scanner.hpp
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/src/kobuki_ftdi/scanner.hpp
+

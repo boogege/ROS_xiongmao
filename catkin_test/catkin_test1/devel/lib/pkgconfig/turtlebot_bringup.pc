@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: turtlebot_bringup
+Description: Description of turtlebot_bringup
+Version: 2.2.2
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib 
+Requires: 

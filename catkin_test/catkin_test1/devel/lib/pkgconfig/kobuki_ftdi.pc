@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: kobuki_ftdi
+Description: Description of kobuki_ftdi
+Version: 0.5.3
+Cflags: -I/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib -lkobuki_ros -lkobuki_nodelet
+Requires: ecl_command_line

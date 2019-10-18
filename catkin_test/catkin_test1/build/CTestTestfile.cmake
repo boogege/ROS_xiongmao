@@ -1,0 +1,35 @@
+# CMake generated Testfile for 
+# Source directory: /home/tmb/catkin_test/catkin_test1/src
+# Build directory: /home/tmb/catkin_test/catkin_test1/build
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+subdirs(gtest)
+subdirs(cmake_modules-0.2-devel)
+subdirs(kobuki-hydro-devel/kobuki)
+subdirs(kobuki-hydro-devel/kobuki_capabilities)
+subdirs(kobuki_core-hydro-devel/kobuki_core)
+subdirs(kobuki_core-hydro-devel/kobuki_ftdi)
+subdirs(kobuki-hydro-devel/kobuki_rapps)
+subdirs(serial)
+subdirs(slam_gmapping-hydro-devel/slam_gmapping)
+subdirs(kobuki_core-hydro-devel/kobuki_dock_drive)
+subdirs(kobuki_core-hydro-devel/kobuki_driver)
+subdirs(get_angle)
+subdirs(go_forward)
+subdirs(kobuki-hydro-devel/kobuki_keyop)
+subdirs(omin_robot)
+subdirs(rdwr_serial)
+subdirs(android_app)
+subdirs(kobuki-hydro-devel/kobuki_auto_docking)
+subdirs(hokuyo_node)
+subdirs(kobuki-hydro-devel/kobuki_bumper2pc)
+subdirs(laser_data)
+subdirs(rplidar_ros)
+subdirs(slam_gmapping-hydro-devel/gmapping)
+subdirs(kobuki-hydro-devel/kobuki_description)
+subdirs(kobuki-hydro-devel/kobuki_controller_tutorial)
+subdirs(kobuki-hydro-devel/kobuki_random_walker)
+subdirs(kobuki-hydro-devel/kobuki_safety_controller)
+subdirs(kobuki-hydro-devel/kobuki_node)
+subdirs(kobuki-hydro-devel/kobuki_testsuite)

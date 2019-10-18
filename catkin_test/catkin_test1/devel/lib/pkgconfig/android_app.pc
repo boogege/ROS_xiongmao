@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: android_app
+Description: Description of android_app
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib 
+Requires: actionlib geometry_msgs move_base_msgs roscpp std_msgs serial

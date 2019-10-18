@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: go_forward
+Description: Description of go_forward
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib 
+Requires: geometry_msgs nav_msgs roscpp std_msgs

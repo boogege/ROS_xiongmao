@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: kobuki_rapps
+Description: Description of kobuki_rapps
+Version: 0.6.2
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib 
+Requires: 

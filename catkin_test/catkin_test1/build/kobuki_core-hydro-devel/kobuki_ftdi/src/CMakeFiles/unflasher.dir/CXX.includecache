@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/include/kobuki_ftdi/scanner.hpp
+vector
+-
+map
+-
+usb.h
+-
+stdint.h
+-
+
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/include/kobuki_ftdi/writer.hpp
+cstring
+-
+ftdi.h
+-
+
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/src/unflasher.cpp
+iostream
+-
+../include/kobuki_ftdi/scanner.hpp
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/include/kobuki_ftdi/scanner.hpp
+../include/kobuki_ftdi/writer.hpp
+/home/tmb/catkin_test/catkin_test1/src/kobuki_core-hydro-devel/kobuki_ftdi/include/kobuki_ftdi/writer.hpp
+

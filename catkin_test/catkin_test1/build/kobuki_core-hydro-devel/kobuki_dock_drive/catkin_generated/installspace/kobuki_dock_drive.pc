@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: kobuki_dock_drive
+Description: Description of kobuki_dock_drive
+Version: 0.5.3
+Cflags: -I/home/tmb/catkin_test/catkin_test1/install/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib -lkobuki_dock_drive
+Requires: ecl_threads ecl_geometry ecl_linear_algebra

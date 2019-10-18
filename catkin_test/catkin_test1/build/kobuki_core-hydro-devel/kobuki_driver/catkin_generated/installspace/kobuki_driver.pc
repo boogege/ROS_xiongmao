@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: kobuki_driver
+Description: Description of kobuki_driver
+Version: 0.5.3
+Cflags: -I/home/tmb/catkin_test/catkin_test1/install/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib -lkobuki
+Requires: ecl_mobile_robot ecl_converters ecl_devices ecl_geometry ecl_sigslots ecl_time ecl_command_line

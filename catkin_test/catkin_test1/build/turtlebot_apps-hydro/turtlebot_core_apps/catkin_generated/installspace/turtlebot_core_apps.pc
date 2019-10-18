@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: turtlebot_core_apps
+Description: Description of turtlebot_core_apps
+Version: 2.2.5
+Cflags: 
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib 
+Requires: 

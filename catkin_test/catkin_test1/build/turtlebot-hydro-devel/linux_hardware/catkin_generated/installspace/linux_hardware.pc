@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/install
+
+Name: linux_hardware
+Description: Description of linux_hardware
+Version: 2.2.2
+Cflags: -I/home/tmb/catkin_test/catkin_test1/install/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/install/lib 
+Requires: message_runtime std_msgs diagnostic_msgs

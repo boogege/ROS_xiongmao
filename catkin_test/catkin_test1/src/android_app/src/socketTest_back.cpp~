@@ -1,0 +1,319 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <iostream>
+#include <stdio.h>
+#include <pthread.h>
+
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include <sstream>
+#include <geometry_msgs/Twist.h>
+
+#define HOSTPORT			9400
+#define MAX_CONNECTION	5
+#define MAX_BUFFER 1024
+
+#define STOP			0
+#define GO			1
+#define BACK			2
+#define LEFT			3
+#define RIGHT			4
+#define TURN			5
+#define EXIT			6
+
+
+using namespace std;
+	int server_socket_fd;
+	int client_socket_fd;
+	int ret ;
+	socklen_t len;
+	struct sockaddr_in server_addr;
+	struct sockaddr_in client_addr;
+        static int cmd1,lastcmd1;
+        char command[10];
+        	ros::Publisher vel_pub;
+void init_server_socket(void)
+{
+
+        cmd1=0;
+        lastcmd1=0;
+	server_socket_fd = socket(AF_INET, SOCK_STREAM, 0);      
+	if ( server_socket_fd == -1 )  
+	{
+        perror("get host_socket_fd error");
+		exit(1);
+	}
+
+	bzero( &server_addr , sizeof( server_addr ) );
+	server_addr.sin_family = AF_INET;               
+	server_addr.sin_port = htons( HOSTPORT );           
+	server_addr.sin_addr.s_addr = inet_addr("192.168.1.3");
+	//	server_addr.sin_addr.s_addr = htonl( INADDR_ANY ); 
+	bzero( &(server_addr.sin_zero), 8 );              
+/*
+	ret = setsockopt( server_socket_fd , SOL_SOCKET , SO_REUSEADDR , &server_addr , sizeof( server_addr ) );
+	if( ret != 0 )
+	{
+		perror("setsockopt error");
+		exit(1);
+	}
+*/
+	ret = bind( server_socket_fd , (struct sockaddr*)&server_addr , sizeof(struct sockaddr) );
+	if (ret == -1) 
+	{
+        perror("bind error");
+		exit(1);
+	}
+
+	ret = listen( server_socket_fd, MAX_CONNECTION );              
+	if (ret == -1) 
+	{
+		perror("listen error");
+		exit(1);
+	}
+
+	cout<<"waiting connection...\n"<<endl;
+	        len = sizeof(struct sockaddr_in);
+	client_socket_fd = accept(server_socket_fd, (struct sockaddr *)&client_addr, &len);
+	if( client_socket_fd == -1 )
+	{
+		perror( "create the client_socket_fd fail" );
+		exit( 1 );
+	}
+        std::cout<<"connection established!\n";  
+	cout<<"new connection client_socket_fd is %d\n"<<client_socket_fd<<endl;
+        std::cout<<"waiting message...\n";
+        
+}
+ 
+
+
+void *thread_control( void *arg )
+{
+
+	
+	int command_change;
+	float x; float y ; float z ;
+	cout<<"Enter the thread_control \n"<<endl;
+
+	
+	while(1)
+	{ 
+	/*	
+             check_command:
+		if( command_change )
+				{
+					PRINT_MESSAGE( "pthread_control command is:%d\n", command );
+					switch( command )
+					{
+						case STOP :
+							{
+								x=0;y=0;z=0;
+								break;
+							}
+						case GO :
+							{
+								x=0;y=0;z=0;
+								break;
+							}
+						case BACK :
+							{
+								x=0;y=0;z=0;
+								break;
+							}						
+						case LEFT :
+							{
+								x=0;y=0;z=0;
+								break;
+							}						
+						case RIGHT :
+							{
+								x=0;y=0;z=0;
+								break;
+							}
+
+						default:
+							{
+								x=0;y=0;z=0;
+								break;
+							}
+					}   
+					
+					command_change = 0;
+				}
+		
+
+		goto check_command ;
+            */
+      //  recv( client_socket_fd , &command , sizeof( command ), 0);
+        //lastflag=command[0]-'0';
+
+        //command_change = 1;
+        geometry_msgs::Twist msg;
+        if (lastcmd1!=cmd1)
+        {
+		//cout<<"11111111111111111"<<endl;
+                switch( cmd1 )
+					{
+						case STOP :
+							{
+								x=0;y=0;z=0;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;    
+
+								break;
+							}
+						case GO :
+							{
+								x=1;y=0;z=0;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;  
+								break;
+							}
+						case BACK :
+							{
+								x=-1;y=0;z=0;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;  
+								break;
+							}						
+						case LEFT :
+							{
+								x=0;y=1;z=0;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;  
+								break;
+							}						
+						case RIGHT :
+							{
+								x=0;y=-1;z=0;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;  
+								break;
+
+							}
+						case TURN :
+							{
+								x=0;y=0;z=1;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;  
+								break;
+							}
+
+						default:
+							{
+
+								x=0;y=0;z=0;
+                                                                   msg.linear.x=x;
+                                                                   msg.linear.y=y;
+                                                                  msg.angular.z=z;  
+								break;
+							}
+           }  
+            vel_pub.publish(msg);
+            cout<<"x:"<<x<<"y:"<<y<<"z:"<<z<<endl;
+        }
+        else
+        {
+		//cout<<"222222222222222222"<<endl;
+		x=0;y=0;z=0;
+                msg.linear.x=x;
+                msg.linear.y=y;
+                msg.angular.z=z;  
+                 vel_pub.publish(msg);
+            cout<<"x:"<<x<<"y:"<<y<<"z:"<<z<<endl;
+        }
+
+
+		
+	}
+	pthread_exit( NULL );
+}
+
+void create_all_thread(void)
+{
+	pthread_t control_thread ;
+	
+	if( (pthread_create( &control_thread , NULL , thread_control , NULL )) != 0 )
+	{
+		perror("Create the thread_control fail");
+		exit( 1 );
+	}
+	
+}
+
+void receive_command( void )
+{
+      /*
+	if( command == EXIT)
+	{
+		close( client_socket_fd );
+		cout<<"Accept again \n"<<endl;
+      */
+       /*         std::cout<<"waiting connection...\n";
+
+		client_socket_fd = accept(server_socket_fd, (struct sockaddr *)&client_addr, &sockaddr_in_length);
+                std::cout<<"connection established!\n";
+                std::cout<<"waiting message...\n";
+		if( client_socket_fd == -1 )
+		{
+			perror( "create the client_socket_fd fail" );
+			exit( 1 );
+		}
+         */
+	//recv( client_socket_fd , &command , sizeof( command ), 0);
+	//command_change = 1;
+	//PRINT_MESSAGE("recv the command is:%d\n", command );
+}
+
+/*void publish(void)
+{
+	geometry_msgs::Twist msg;
+     
+    msg.linear.x=x;
+    msg.linear.y=y;
+    msg.angular.z=z;    
+    vel_pub.publish(msg);
+}  
+*/
+
+int main(int argc,char** argv)
+{
+
+	ros::init(argc, argv, "android_tele");
+        ros::NodeHandle n;
+
+    vel_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 10);
+	
+	init_server_socket( );		
+
+	create_all_thread( );
+
+	sleep(1);
+
+	while(ros::ok())
+	{
+		//receive_command( );
+                recv( client_socket_fd , &command , sizeof( command ), 0);
+                cmd1=command[0]-'0';
+              //  publish();
+	}
+    
+	
+
+	close( server_socket_fd );
+	close( client_socket_fd );
+	return 0; 
+	
+}
+

@@ -1,0 +1,8 @@
+prefix=/home/tmb/catkin_test/catkin_test1/devel
+
+Name: kobuki_bumper2pc
+Description: Description of kobuki_bumper2pc
+Version: 0.6.2
+Cflags: -I/home/tmb/catkin_test/catkin_test1/src/kobuki-hydro-devel/kobuki_bumper2pc/include
+Libs: -L/home/tmb/catkin_test/catkin_test1/devel/lib -lkobuki_bumper2pc_nodelet
+Requires: roscpp nodelet pluginlib sensor_msgs kobuki_msgs
